@@ -1,29 +1,37 @@
 package com.portfolio.ContactBackend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import com.portfolio.ContactBackend.Entity.ContactRequest;
+import com.portfolio.ContactBackend.model.ContactForm;
 import com.portfolio.ContactBackend.service.EmailService;
 
-import jakarta.validation.Valid;
-
 @RestController
+@RequestMapping("/api/contact")
+@CrossOrigin(origins = "http://localhost:5173/")
 public class ContactController {
 
 	@Autowired
-	private EmailService emailservice;
+	private EmailService emailService;
 	
-	 @PostMapping
-	    public String sendMessage(@Valid @RequestBody ContactRequest contactReq) {
-	        emailservice.sendEmail(
-	            contactReq.getName(),
-	            contactReq.getEmail(),
-	            contactReq.getSubject(),
-	            contactReq.getMessage()
-	        );
-	        return "Message sent successfully ";
+	@PostMapping("/send")
+	public ResponseEntity<String> sendContactEmail(@RequestBody ContactForm form) {
+	    if(form.getEmail() == null || form.getEmail().isEmpty()) {
+	        return ResponseEntity.badRequest().body("Email is required");
 	    }
+	    try {
+	        emailService.sendEmail(
+	            form.getName(),
+	            form.getEmail(),   
+	            form.getSubject(),
+	            form.getMessage()
+	        );
+	        return ResponseEntity.ok("Message sent successfully!");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(500).body("Failed: " + e.getMessage());
+	    }
+	}
+
 }
