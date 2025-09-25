@@ -9,10 +9,10 @@ import com.portfolio.ContactBackend.service.EmailService;
 
 @RestController
 @RequestMapping("/api/contact")
-@CrossOrigin(origins = "http://localhost:5173/")
+@CrossOrigin(origins = {"http://localhost:5173/","https://portfolio-sr.vercel.app"})
 public class ContactController {
 
-	@Autowired
+	@Autowired 
 	private EmailService emailService;
 	
 	@PostMapping("/send")
@@ -25,7 +25,7 @@ public class ContactController {
 	            form.getName(),
 	            form.getEmail(),   
 	            form.getSubject(),
-	            form.getMessage()
+	            form.getMessage() 
 	        );
 	        return ResponseEntity.ok("Message sent successfully!");
 	    } catch (Exception e) {
